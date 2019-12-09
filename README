@@ -1,0 +1,11 @@
+For the first call of vagrant up you need to uncomment line 59-60 in the Vagrant file
+
+
+After all machines are up and running connect to the servers and do the following for both:
+	1. dpkg-reconfigure oc2fs (Option1: [Yes] Option2: [slurmcluster] Remaining options: default)
+	only server1: mkfs.ocfs2 -b 4k -C 4k -L "lps" -N 8 /dev/sdb
+		      mkfs.ocfs2 -b 4k -C 4k -L "hps" -N 8 /dev/sdc
+	2. service o2cb online
+	3. mount /dev/sdb /home/vagrant/lps
+	4. mount /dev/sdc /home/vagrant/hps
+

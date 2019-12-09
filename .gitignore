@@ -1,0 +1,6 @@
+hps.vdi
+lps.vdi
+.vagrant
+slurm/
+slurmtestv.err
+slurmtestv.out
