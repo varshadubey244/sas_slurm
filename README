@@ -1,11 +1,50 @@
-For the first call of vagrant up you need to uncomment line 59-60 in the Vagrant file
+Install Vagrant and VirtualBox.
+Clone Slurm from github in the same folder where all of files from here are cloned. https://github.com/SchedMD/slurm.git
+
+For the first call of vagrant up uncomment line 75-76 in the Vagrant file. And run "vagrant up" in terminal.
+Run "vagrant up" twice inspite of errors or no errors.
+Now comment out the lines 75-76 and run "vagrant up".
+Now, the machines (controller, server1 and server2) should be up and running. Check with "vagrant status".
+
+Connect to the controller with "vagrant ssh controller"
+cd into /vagrant/slurm and run following commands one by one to install Slurm.
+	1. ./configure
+	2. make
+	3. make install
+	4. sudo slurmctld -D &
+Check if the Slurmctld is running on controller by using "pstree"
+
+Now exit from the controller and connect to server1 with "vagrant ssh server1"
+On, both the servers Slurmd daemon should already start but can be checked with "pstree"
+If Slurmd is not started however cd into /vagrant/slurm and run the following commands one by one.
+	1. ./configure
+	2. make
+	3. make install
+	4. slurmd start
+Repeat the same for server2.
+
+Now, connect back to controller and run "sinfo". The two server nodes should be idle and not down.
+If they are down, reboot them by "sudo scontrol reboot all" from controller.
+
+The two storages (hps and lps) should be created and mounted inside the server1 and server2 which should be visible by "ll".
+If the two storages are not mounted to both the servers, open VirtualBox, go to server1 settings -> storage -> add hard disk -> choose existing disk and add hps and lps one by one.
+Repeat the same for server2.
+Check if the lps and hps is shareable by connecting to server1, creating a test file inside lps or hps and checking if it's visible when you connect to server2.
+
+The bandwidth of both the storages can be checked with following commands:
+	1. Connect to any server  "vagrant ssh server1"
+	2. Check bandwith of one storage "sudo hdparm -t /dev/sdb"
+	3. Check bandwidth of the other storage "sudo hdparm -t /dev/sdc"
+One storage should be considerably slower than the other.
 
 
-After all machines are up and running connect to the servers and do the following for both:
-	1. dpkg-reconfigure oc2fs (Option1: [Yes] Option2: [slurmcluster] Remaining options: default)
-	only server1: mkfs.ocfs2 -b 4k -C 4k -L "lps" -N 8 /dev/sdb
-		      mkfs.ocfs2 -b 4k -C 4k -L "hps" -N 8 /dev/sdc
-	2. service o2cb online
-	3. mount /dev/sdb /home/vagrant/lps
-	4. mount /dev/sdc /home/vagrant/hps
+
+
+
+
+
+
+
+
+
 
